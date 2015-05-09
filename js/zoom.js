@@ -15,10 +15,10 @@
   }
 
   ZoomService.prototype.listen = function () {
-	Array.prototype.forEach.call(document.querySelectorAll('[data-action="zoom"]'), function (element) {
-		element.addEventListener('click', this._zoom.bind(this))
+	document.body.addEventListener('click', function (event) {
+		if (event.target.dataset.action === 'zoom') this._zoom.bind(this)(event)
 	}.bind(this))
-    // this._body.on('click', '[data-action="zoom"]', this._zoom.bind(this))
+    // jQuery(this._body.on('click', '[data-action="zoom"]', this._zoom.bind(this))
   }
 
   ZoomService.prototype._zoom = function (e) {
@@ -26,7 +26,7 @@
 
     if (!target || target.tagName != 'IMG') return
 
-    if (this._$body.hasClass('zoom-overlay-open')) return
+    if (this._body.classList.contains('zoom-overlay-open')) return
 
     if (e.metaKey) return window.open(e.target.src, '_blank')
 
