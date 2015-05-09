@@ -188,8 +188,8 @@
     this._translateY = viewportY - imageCenterY
     this._translateX = viewportX - imageCenterX
 
-    jQuery(this._targetImage).css('transform', 'scale(' + this._imgScaleFactor + ')')
-    jQuery(this._targetImageWrap).css('transform', 'translate(' + this._translateX + 'px, ' + this._translateY + 'px) translateZ(0)')
+    this._targetImage.style.transform = 'scale(' + this._imgScaleFactor + ')'
+    this._targetImageWrap.style.transform = 'translate(' + this._translateX + 'px, ' + this._translateY + 'px) translateZ(0)'
 
     this._body.classList.add('zoom-overlay-open')
   }
@@ -199,8 +199,8 @@
     this._body.classList.add('zoom-overlay-transitioning')
 
     // we use setStyle here so that the correct vender prefix for transform is used
-    jQuery(this._targetImage).css('transform', '')
-    jQuery(this._targetImageWrap).css('transform', '')
+    this._targetImage.style.transform = ''
+    this._targetImageWrap.style.transform = ''
 
     jQuery(this._targetImage)
       .one(jQuery.support.transition.end, this.dispose.bind(this))
