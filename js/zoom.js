@@ -4,6 +4,24 @@
   var keyHandlerFn;
   var touchStartFn;
 
+  function offset(element) {
+	// From http://www.quirksmode.org/js/findpos.html
+	var curleft = 0
+	var curtop = 0
+
+	if (element.offsetParent) {
+		do {
+			curleft += element.offsetLeft
+			curtop += element.offsetTop
+		} while (element = element.offsetParent)
+	}
+
+	return {
+		left: curleft,
+		top: curtop
+	}
+  }
+
   /**
    * The zoom service
    */
@@ -177,10 +195,7 @@
   Zoom.prototype._triggerAnimation = function () {
     this._targetImage.offsetWidth // repaint before animating
 
-    var imageOffset = { // TEMP HAX, TODO NOT ROBUST USE RECURSION
-		top: this._targetImage.offsetParent.offsetTop,
-		left: this._targetImage.offsetParent.offsetLeft
-	}
+	var imageOffset = offset(this._targetImage)
     var scrollTop   = window.scrollY
 
     var viewportY = scrollTop + (window.innerHeight / 2)
