@@ -1,4 +1,26 @@
-+function ($) { "use strict";
++function () { "use strict";
+  var scrollHandlerFn;
+  var clickHandlerFn;
+  var keyHandlerFn;
+  var touchStartFn;
+  var touchMoveFn;
+
+  function offset(element) {
+	// From http://www.quirksmode.org/js/findpos.html
+	var offset = {
+		top: 0,
+		left: 0
+	}
+
+	if (!element.offsetParent) return offset
+
+	do {
+		offset.left += element.offsetLeft
+		offset.top += element.offsetTop
+	} while (element = element.offsetParent)
+
+	return offset
+  }
 
   /**
    * The zoom service
@@ -9,13 +31,15 @@
     this._initialTouchPosition  =
     this._touchMoveListener     = null
 
-    this._$document = $(document)
-    this._$window   = $(window)
-    this._$body     = $(document.body)
+    this._document = document
+    this._window   = window
+    this._body     = document.body
   }
 
   ZoomService.prototype.listen = function () {
-    this._$body.on('click', '[data-action="zoom"]', $.proxy(this._zoom, this))
+	document.body.addEventListener('click', function (event) {
+		if (event.target.dataset.action === 'zoom') this._zoom(event)
+	}.bind(this))
   }
 
   ZoomService.prototype._zoom = function (e) {
@@ -23,7 +47,7 @@
 
     if (!target || target.tagName != 'IMG') return
 
-    if (this._$body.hasClass('zoom-overlay-open')) return
+    if (this._body.classList.contains('zoom-overlay-open')) return
 
     if (e.metaKey) return window.open(e.target.src, '_blank')
 
@@ -34,12 +58,16 @@
     this._activeZoom = new Zoom(target)
     this._activeZoom.zoomImage()
 
-    // todo(fat): probably worth throttling this
-    this._$window.on('scroll.zoom', $.proxy(this._scrollHandler, this))
+	scrollHandlerFn = this._scrollHandler.bind(this)
+	clickHandlerFn = this._clickHandler.bind(this)
+	keyHandlerFn = this._keyHandler.bind(this)
+	touchStartFn = this._touchStart.bind(this)
 
-    this._$document.on('click.zoom', $.proxy(this._clickHandler, this))
-    this._$document.on('keyup.zoom', $.proxy(this._keyHandler, this))
-    this._$document.on('touchstart.zoom', $.proxy(this._touchStart, this))
+    // todo(fat): probably worth throttling this
+	this._window.addEventListener('scroll', scrollHandlerFn)
+    this._document.addEventListener('click', clickHandlerFn)
+    this._document.addEventListener('keyup', keyHandlerFn)
+    this._document.addEventListener('touchstart', touchStartFn)
 
     e.stopPropagation()
   }
@@ -53,8 +81,10 @@
       this._activeZoom.close()
     }
 
-    this._$window.off('.zoom')
-    this._$document.off('.zoom')
+	this._window.removeEventListener('scroll', scrollHandlerFn)
+    this._document.removeEventListener('click', clickHandlerFn)
+    this._document.removeEventListener('keyup', keyHandlerFn)
+    this._document.removeEventListener('touchstart', touchStartFn)
 
     this._activeZoom = null
   }
@@ -77,13 +107,15 @@
 
   ZoomService.prototype._touchStart = function (e) {
     this._initialTouchPosition = e.touches[0].pageY
-    $(e.target).on('touchmove.zoom', $.proxy(this._touchMove, this))
+
+	touchMoveFn = this._touchMove.bind(this)
+	e.target.addEventListener('touchmove', touchMoveFn)
   }
 
   ZoomService.prototype._touchMove = function (e) {
     if (Math.abs(e.touches[0].pageY - this._initialTouchPosition) > 10) {
       this._activeZoomClose()
-      $(e.target).off('touchmove.zoom')
+      e.target.removeEventListener('touchmove', touchMoveFn)
     }
   }
 
@@ -99,7 +131,7 @@
 
     this._targetImage = img
 
-    this._$body = $(document.body)
+    this._body = document.body
   }
 
   Zoom.OFFSET = 80
@@ -108,11 +140,11 @@
 
   Zoom.prototype.zoomImage = function () {
     var img = document.createElement('img')
-    img.onload = $.proxy(function () {
+    img.onload = function () {
       this._fullHeight = Number(img.height)
       this._fullWidth = Number(img.width)
       this._zoomOriginal()
-    }, this)
+    }.bind(this)
     img.src = this._targetImage.src
   }
 
@@ -123,9 +155,8 @@
     this._targetImage.parentNode.insertBefore(this._targetImageWrap, this._targetImage)
     this._targetImageWrap.appendChild(this._targetImage)
 
-    $(this._targetImage)
-      .addClass('zoom-img')
-      .attr('data-action', 'zoom-out')
+    this._targetImage.classList.add('zoom-img')
+	this._targetImage.dataset.action = 'zoom-out'
 
     this._overlay           = document.createElement('div')
     this._overlay.className = 'zoom-overlay'
@@ -166,7 +197,7 @@
   Zoom.prototype._triggerAnimation = function () {
     this._targetImage.offsetWidth // repaint before animating
 
-    var imageOffset = $(this._targetImage).offset()
+	var imageOffset = offset(this._targetImage)
     var scrollTop   = window.scrollY
 
     var viewportY = scrollTop + (window.innerHeight / 2)
@@ -178,39 +209,35 @@
     this._translateY = viewportY - imageCenterY
     this._translateX = viewportX - imageCenterX
 
-    $(this._targetImage).css('transform', 'scale(' + this._imgScaleFactor + ')')
-    $(this._targetImageWrap).css('transform', 'translate(' + this._translateX + 'px, ' + this._translateY + 'px) translateZ(0)')
+    this._targetImage.style.transform = 'scale(' + this._imgScaleFactor + ')'
+    this._targetImageWrap.style.transform = 'translate(' + this._translateX + 'px, ' + this._translateY + 'px) translateZ(0)'
 
-    this._$body.addClass('zoom-overlay-open')
+    this._body.classList.add('zoom-overlay-open')
   }
 
   Zoom.prototype.close = function () {
-    this._$body
-      .removeClass('zoom-overlay-open')
-      .addClass('zoom-overlay-transitioning')
+    this._body.classList.remove('zoom-overlay-open')
+    this._body.classList.add('zoom-overlay-transitioning')
 
     // we use setStyle here so that the correct vender prefix for transform is used
-    $(this._targetImage).css('transform', '')
-    $(this._targetImageWrap).css('transform', '')
+    this._targetImage.style.transform = ''
+    this._targetImageWrap.style.transform = ''
 
-    $(this._targetImage)
-      .one($.support.transition.end, $.proxy(this.dispose, this))
-      .emulateTransitionEnd(300)
+	this._targetImage.addEventListener('transitionend', this.dispose.bind(this))
   }
 
   Zoom.prototype.dispose = function () {
     if (this._targetImageWrap && this._targetImageWrap.parentNode) {
-      $(this._targetImage)
-        .removeClass('zoom-img')
-        .attr('data-action', 'zoom')
+      this._targetImage.classList.remove('zoom-img')
+      this._targetImage.dataset.action = 'zoom'
 
       this._targetImageWrap.parentNode.replaceChild(this._targetImage, this._targetImageWrap)
       this._overlay.parentNode.removeChild(this._overlay)
 
-      this._$body.removeClass('zoom-overlay-transitioning')
+      this._body.classList.remove('zoom-overlay-transitioning')
     }
   }
 
   new ZoomService().listen()
 
-}(jQuery)
+}()
