@@ -6,20 +6,19 @@
 
   function offset(element) {
 	// From http://www.quirksmode.org/js/findpos.html
-	var curleft = 0
-	var curtop = 0
+	var offset = {
+		top: 0,
+		left: 0
+	}
 
 	if (element.offsetParent) {
 		do {
-			curleft += element.offsetLeft
-			curtop += element.offsetTop
+			offset.left += element.offsetLeft
+			offset.top += element.offsetTop
 		} while (element = element.offsetParent)
 	}
 
-	return {
-		left: curleft,
-		top: curtop
-	}
+	return offset
   }
 
   /**
