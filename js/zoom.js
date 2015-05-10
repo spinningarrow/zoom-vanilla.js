@@ -3,6 +3,7 @@
   var clickHandlerFn;
   var keyHandlerFn;
   var touchStartFn;
+  var touchMoveFn;
 
   function offset(element) {
 	// From http://www.quirksmode.org/js/findpos.html
@@ -11,12 +12,12 @@
 		left: 0
 	}
 
-	if (element.offsetParent) {
-		do {
-			offset.left += element.offsetLeft
-			offset.top += element.offsetTop
-		} while (element = element.offsetParent)
-	}
+	if (!element.offsetParent) return offset
+
+	do {
+		offset.left += element.offsetLeft
+		offset.top += element.offsetTop
+	} while (element = element.offsetParent)
 
 	return offset
   }
@@ -106,13 +107,15 @@
 
   ZoomService.prototype._touchStart = function (e) {
     this._initialTouchPosition = e.touches[0].pageY
-    $(e.target).on('touchmove.zoom', $.proxy(this._touchMove, this))
+
+	touchMoveFn = this._touchMove.bind(this)
+	e.target.addEventListener('touchmove', touchMoveFn)
   }
 
   ZoomService.prototype._touchMove = function (e) {
     if (Math.abs(e.touches[0].pageY - this._initialTouchPosition) > 10) {
       this._activeZoomClose()
-      $(e.target).off('touchmove.zoom')
+      e.target.removeEventListener('touchmove', touchMoveFn)
     }
   }
 
