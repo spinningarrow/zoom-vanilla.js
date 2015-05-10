@@ -1,4 +1,4 @@
-+function ($) { "use strict";
++function () { "use strict";
   var scrollHandlerFn;
   var clickHandlerFn;
   var keyHandlerFn;
