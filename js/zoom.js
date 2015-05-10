@@ -1,4 +1,8 @@
 +function ($) { "use strict";
+  var scrollHandlerFn;
+  var clickHandlerFn;
+  var keyHandlerFn;
+  var touchStartFn;
 
   /**
    * The zoom service
@@ -16,9 +20,8 @@
 
   ZoomService.prototype.listen = function () {
 	document.body.addEventListener('click', function (event) {
-		if (event.target.dataset.action === 'zoom') this._zoom.bind(this)(event)
+		if (event.target.dataset.action === 'zoom') this._zoom(event)
 	}.bind(this))
-    // jQuery(this._body.on('click', '[data-action="zoom"]', this._zoom.bind(this))
   }
 
   ZoomService.prototype._zoom = function (e) {
@@ -37,13 +40,16 @@
     this._activeZoom = new Zoom(target)
     this._activeZoom.zoomImage()
 
-    // todo(fat): probably worth throttling this
-	// TODO namespace these
-	this._window.addEventListener('scroll', this._scrollHandler.bind(this))
+	scrollHandlerFn = this._scrollHandler.bind(this)
+	clickHandlerFn = this._clickHandler.bind(this)
+	keyHandlerFn = this._keyHandler.bind(this)
+	touchStartFn = this._touchStart.bind(this)
 
-    this._document.addEventListener('click', this._clickHandler.bind(this))
-    this._document.addEventListener('keyup', this._keyHandler.bind(this))
-    this._document.addEventListener('touchstart', this._touchStart.bind(this))
+    // todo(fat): probably worth throttling this
+	this._window.addEventListener('scroll', scrollHandlerFn)
+    this._document.addEventListener('click', clickHandlerFn)
+    this._document.addEventListener('keyup', keyHandlerFn)
+    this._document.addEventListener('touchstart', touchStartFn)
 
     e.stopPropagation()
   }
@@ -57,12 +63,10 @@
       this._activeZoom.close()
     }
 
-	this._window.removeEventListener('scroll', this._scrollHandler.bind(this))
-    // this._window.off('.zoom')
-    // this._document.off('.zoom')
-    this._document.removeEventListener('click', this._clickHandler.bind(this))
-    this._document.removeEventListener('keyup', this._keyHandler.bind(this))
-    this._document.removeEventListener('touchstart', this._touchStart.bind(this))
+	this._window.removeEventListener('scroll', scrollHandlerFn)
+    this._document.removeEventListener('click', clickHandlerFn)
+    this._document.removeEventListener('keyup', keyHandlerFn)
+    this._document.removeEventListener('touchstart', touchStartFn)
 
     this._activeZoom = null
   }
@@ -202,9 +206,7 @@
     this._targetImage.style.transform = ''
     this._targetImageWrap.style.transform = ''
 
-    jQuery(this._targetImage)
-      .one(jQuery.support.transition.end, this.dispose.bind(this))
-      .emulateTransitionEnd(300)
+	this._targetImage.addEventListener('transitionend', this.dispose.bind(this))
   }
 
   Zoom.prototype.dispose = function () {
