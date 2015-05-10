@@ -1,23 +1,24 @@
 {
-  "name": "zoom.js",
+  "name": "zoom-vanilla.js",
   "version": "0.0.1",
   "description": "It's the best way to zoom an image",
   "main": "js/zoom.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:fat/zoom.js.git"
+    "url": "git@github.com:spinningarrow/zoom-vanilla.js.git"
   },
   "keywords": [
     "zoom",
-    "jquery",
+    "vanilla",
+    "vanilla-js",
     "image"
   ],
-  "author": "fat <jacobthornton@gmail.com>",
+  "author": "spinningarrow <sahil29@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fat/zoom.js/issues"
+    "url": "https://github.com/spinningarrow/zoom-vanilla.js/issues"
   },
-  "homepage": "https://github.com/fat/zoom.js",
+  "homepage": "https://github.com/spinningarrow/zoom-vanilla.js",
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-file-insert": "^1.0.2",

@@ -1,9 +1,11 @@
 # ZOOM.JS
 
-A simple jQuery plugin for image zooming; as seen on [Medium](https://medium.com/designing-medium/image-zoom-on-medium-24d146fc0c20).
+A simple library for image zooming; as seen on [Medium](https://medium.com/designing-medium/image-zoom-on-medium-24d146fc0c20).
+
+This library is a fork of the [original jQuery plugin by fat](https://github.com/fat/zoom.js). This version does not depend on jQuery. I'm also trying not to modify the original code too much so that consuming upstream changes (if any) becomes easier.
 
 ### Demo
-https://fat.github.io/zoom.js
+https://spinningarrow.github.io/zoom-vanilla.js
 
 ### How
 
@@ -14,13 +16,7 @@ https://fat.github.io/zoom.js
   <script src="js/zoom.js"></script>
   ```
 
-2. zoom.js is dependent on [transition.js file](https://raw.github.com/twbs/bootstrap/master/js/transition.js) from Bootstrap, so make sure to include that as well.
-
-  ```html
-  <script src="js/transition.js"></script>
-  ```
-
-3. Add a `data-action="zoom"` attribute to the images you want to make zoomable. For example:
+2. Add a `data-action="zoom"` attribute to the images you want to make zoomable. For example:
 
   ```html
   <img src="img/blog_post_featured.png" data-action="zoom">
@@ -36,9 +32,13 @@ Also, now if you hold your meta key (`⌘`), it will open in a new tab. wow.
 
 ### Where
 
-zoom.js should (in theory) work in all relevant browsers. If not, create an issue! Thanks!
+zoom.js should (in theory) work in all modern browsers. If not, create an issue! Thanks!
 
 
 ### Who
 
-Written by <a href="//twitter.com/fat">@fat</a>, made better by you.
+This version by [@spinningarrow][].
+
+Originally written by <a href="//twitter.com/fat">@fat</a>, made better by you.
+
+[@spinningarrow]: https://github.com/spinningarrow
