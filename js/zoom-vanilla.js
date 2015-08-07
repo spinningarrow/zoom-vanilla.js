@@ -185,8 +185,8 @@
 			var imageCenterY = imageOffset.top + (targetImage.height / 2)
 			var imageCenterX = imageOffset.left + (targetImage.width / 2)
 
-			var translateY = viewportY - imageCenterY
-			var translateX = viewportX - imageCenterX
+			var translateY = Math.round(viewportY - imageCenterY)
+			var translateX = Math.round(viewportX - imageCenterX)
 
 			var targetImageTransform = 'scale(' + imgScaleFactor + ')'
 			var targetImageWrapTransform =
