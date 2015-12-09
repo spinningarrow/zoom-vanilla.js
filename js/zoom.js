@@ -213,6 +213,8 @@
 
     this._targetImage.style.transform = 'scale(' + this._imgScaleFactor + ')'
     this._targetImageWrap.style.transform = 'translate(' + this._translateX + 'px, ' + this._translateY + 'px) translateZ(0)'
+    this._targetImage.style.webkitTransform = 'scale(' + this._imgScaleFactor + ')'
+    this._targetImageWrap.style.webkitTransform = 'translate(' + this._translateX + 'px, ' + this._translateY + 'px) translateZ(0)'
 
     this._body.classList.add('zoom-overlay-open')
   }
@@ -224,6 +226,8 @@
     // we use setStyle here so that the correct vender prefix for transform is used
     this._targetImage.style.transform = ''
     this._targetImageWrap.style.transform = ''
+    this._targetImage.style.webkitTransform = ''
+    this._targetImageWrap.style.webkitTransform = ''
 
 	this._targetImage.addEventListener('transitionend', this.dispose.bind(this))
   }
