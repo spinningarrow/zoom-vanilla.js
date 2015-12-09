@@ -229,7 +229,8 @@
     this._targetImage.style.webkitTransform = ''
     this._targetImageWrap.style.webkitTransform = ''
 
-	this._targetImage.addEventListener('transitionend', this.dispose.bind(this))
+	  this._targetImage.addEventListener('transitionend', this.dispose.bind(this))
+    this._targetImage.addEventListener('webkitTransitionEnd', this.dispose.bind(this))
   }
 
   Zoom.prototype.dispose = function () {
