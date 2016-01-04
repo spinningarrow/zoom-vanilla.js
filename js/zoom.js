@@ -38,7 +38,7 @@
 
   ZoomService.prototype.listen = function () {
 	document.body.addEventListener('click', function (event) {
-		if (event.target.dataset.action === 'zoom') this._zoom(event)
+		if (event.target.getAttribute('data-action') === 'zoom') this._zoom(event)
 	}.bind(this))
   }
 
@@ -49,7 +49,9 @@
 
     if (this._body.classList.contains('zoom-overlay-open')) return
 
-    if (e.metaKey) return window.open(e.target.src, '_blank')
+    if (e.metaKey || e.ctrlKey) {
+      return window.open((e.target.getAttribute('data-original') || e.target.currentSrc || e.target.src), '_blank')
+    }
 
     if (target.width >= (window.innerWidth - Zoom.OFFSET)) return
 
@@ -145,7 +147,7 @@
       this._fullWidth = Number(img.width)
       this._zoomOriginal()
     }.bind(this)
-    img.src = this._targetImage.src
+    img.src = this._targetImage.currentSrc || this._targetImage.src
   }
 
   Zoom.prototype._zoomOriginal = function () {
@@ -156,7 +158,7 @@
     this._targetImageWrap.appendChild(this._targetImage)
 
     this._targetImage.classList.add('zoom-img')
-	this._targetImage.dataset.action = 'zoom-out'
+	this._targetImage.setAttribute('data-action', 'zoom-out')
 
     this._overlay           = document.createElement('div')
     this._overlay.className = 'zoom-overlay'
@@ -209,6 +211,10 @@
     this._translateY = viewportY - imageCenterY
     this._translateX = viewportX - imageCenterX
 
+    this._targetImage.style.webkitTransform = 'scale(' + this._imgScaleFactor + ')'
+    this._targetImageWrap.style.webkitTransform = 'translate(' + this._translateX + 'px, ' + this._translateY + 'px) translateZ(0)'
+    this._targetImage.style.msTransform = 'scale(' + this._imgScaleFactor + ')'
+    this._targetImageWrap.style.msTransform = 'translate(' + this._translateX + 'px, ' + this._translateY + 'px) translateZ(0)'
     this._targetImage.style.transform = 'scale(' + this._imgScaleFactor + ')'
     this._targetImageWrap.style.transform = 'translate(' + this._translateX + 'px, ' + this._translateY + 'px) translateZ(0)'
 
@@ -220,16 +226,24 @@
     this._body.classList.add('zoom-overlay-transitioning')
 
     // we use setStyle here so that the correct vender prefix for transform is used
+    this._targetImage.style.webkitTransform = ''
+    this._targetImageWrap.style.webkitTransform = ''
+    this._targetImage.style.msTransform = ''
+    this._targetImageWrap.style.msTransform = ''
     this._targetImage.style.transform = ''
     this._targetImageWrap.style.transform = ''
 
-	this._targetImage.addEventListener('transitionend', this.dispose.bind(this))
+    if (!'transition' in document.body.style)
+      return this.dispose(this)
+
+	  this._targetImage.addEventListener('transitionend', this.dispose.bind(this))
+    this._targetImage.addEventListener('webkitTransitionEnd', this.dispose.bind(this))
   }
 
   Zoom.prototype.dispose = function () {
     if (this._targetImageWrap && this._targetImageWrap.parentNode) {
       this._targetImage.classList.remove('zoom-img')
-      this._targetImage.dataset.action = 'zoom'
+      this._targetImage.setAttribute('data-action', 'zoom')
 
       this._targetImageWrap.parentNode.replaceChild(this._targetImage, this._targetImageWrap)
       this._overlay.parentNode.removeChild(this._overlay)
