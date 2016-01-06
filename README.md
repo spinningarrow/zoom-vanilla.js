@@ -64,4 +64,4 @@ This version by [@spinningarrow][] and [@heavybeard][].
 Originally written by <a href="//twitter.com/fat">@fat</a>, made better by you.
 
 [@spinningarrow]: https://github.com/spinningarrow
-[@heavybeard]: https://github.com/spinningarrow
+[@heavybeard]: https://github.com/heavybeard
