@@ -45,7 +45,7 @@ https://spinningarrow.github.io/zoom-vanilla.js
 
 It's the best way to zoom an image or a video. It transitions/zooms in really smoothly, and then when you're done, scrolls away, [esc] keys away, clicks away… clean af.
 
-If you hold your meta key (`⌘`o `Ctrl`) it will open in a new tab.
+If you hold your meta key (`⌘` or `Ctrl`) it will open in a new tab.
 If you add the new data property `data-original="path/to/image"` it will open a different image on the new tab, for example the full size image.
 
 ```html
