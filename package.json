@@ -2,7 +2,7 @@
   "name": "zoom-vanilla.js",
   "version": "0.0.1",
   "description": "It's the best way to zoom an image",
-  "main": "js/zoom.js",
+  "main": "js/zoom-vanilla.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:spinningarrow/zoom-vanilla.js.git"
@@ -23,7 +23,7 @@
     "uglify-js": "^2.4.21"
   },
   "scripts": {
-    "compress": "uglifyjs --preamble=\"// $npm_package_name - $npm_package_version ($npm_package_homepage)\" js/zoom.js > dist/zoom.min.js",
+    "compress": "uglifyjs --preamble=\"// $npm_package_name - $npm_package_version ($npm_package_homepage)\" js/zoom-vanilla.js > dist/zoom-vanilla.min.js",
     "clean": "rm -rf dist/*",
     "build": "npm run clean && npm run compress"
   }
