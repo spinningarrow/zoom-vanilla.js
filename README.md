@@ -15,7 +15,7 @@ https://spinningarrow.github.io/zoom-vanilla.js
 
   ```html
   <link href="css/zoom.css" rel="stylesheet">
-  <script src="js/zoom.js"></script>
+  <script src="js/zoom-vanilla.js"></script>
   ```
 
 2. Add a `data-action="zoom"` attribute to the images or the videos you want to make zoomable. For example:
