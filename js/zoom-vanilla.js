@@ -5,21 +5,21 @@
   var touchStartFn;
   var touchMoveFn;
 
+  // From http://www.quirksmode.org/js/findpos.html
   function offset(element) {
-	// From http://www.quirksmode.org/js/findpos.html
-	var offset = {
-		top: 0,
-		left: 0
-	}
+    var offset = {
+      top: 0,
+      left: 0
+    }
 
-	if (!element.offsetParent) return offset
+    if (!element.offsetParent) return offset
 
-	do {
-		offset.left += element.offsetLeft
-		offset.top += element.offsetTop
-	} while (element = element.offsetParent)
+    do {
+      offset.left += element.offsetLeft
+      offset.top += element.offsetTop
+    } while (element = element.offsetParent)
 
-	return offset
+    return offset
   }
 
   /**
@@ -37,9 +37,9 @@
   }
 
   ZoomService.prototype.listen = function () {
-	document.body.addEventListener('click', function (event) {
-		if (event.target.getAttribute('data-action') === 'zoom') this._zoom(event)
-	}.bind(this))
+    document.body.addEventListener('click', function (event) {
+      if (event.target.getAttribute('data-action') === 'zoom') this._zoom(event)
+    }.bind(this))
   }
 
   ZoomService.prototype._zoom = function (e) {
@@ -60,13 +60,13 @@
     this._activeZoom = new Zoom(target)
     this._activeZoom.zoomImage()
 
-	scrollHandlerFn = this._scrollHandler.bind(this)
-	clickHandlerFn = this._clickHandler.bind(this)
-	keyHandlerFn = this._keyHandler.bind(this)
-	touchStartFn = this._touchStart.bind(this)
+    scrollHandlerFn = this._scrollHandler.bind(this)
+    clickHandlerFn = this._clickHandler.bind(this)
+    keyHandlerFn = this._keyHandler.bind(this)
+    touchStartFn = this._touchStart.bind(this)
 
     // todo(fat): probably worth throttling this
-	this._window.addEventListener('scroll', scrollHandlerFn)
+    this._window.addEventListener('scroll', scrollHandlerFn)
     this._document.addEventListener('click', clickHandlerFn)
     this._document.addEventListener('keyup', keyHandlerFn)
     this._document.addEventListener('touchstart', touchStartFn)
@@ -83,7 +83,7 @@
       this._activeZoom.close()
     }
 
-	this._window.removeEventListener('scroll', scrollHandlerFn)
+    this._window.removeEventListener('scroll', scrollHandlerFn)
     this._document.removeEventListener('click', clickHandlerFn)
     this._document.removeEventListener('keyup', keyHandlerFn)
     this._document.removeEventListener('touchstart', touchStartFn)
@@ -110,8 +110,8 @@
   ZoomService.prototype._touchStart = function (e) {
     this._initialTouchPosition = e.touches[0].pageY
 
-	touchMoveFn = this._touchMove.bind(this)
-	e.target.addEventListener('touchmove', touchMoveFn)
+    touchMoveFn = this._touchMove.bind(this)
+    e.target.addEventListener('touchmove', touchMoveFn)
   }
 
   ZoomService.prototype._touchMove = function (e) {
@@ -158,7 +158,7 @@
     this._targetImageWrap.appendChild(this._targetImage)
 
     this._targetImage.classList.add('zoom-img')
-	this._targetImage.setAttribute('data-action', 'zoom-out')
+    this._targetImage.setAttribute('data-action', 'zoom-out')
 
     this._overlay           = document.createElement('div')
     this._overlay.className = 'zoom-overlay'
@@ -199,7 +199,7 @@
   Zoom.prototype._triggerAnimation = function () {
     this._targetImage.offsetWidth // repaint before animating
 
-	var imageOffset = offset(this._targetImage)
+    var imageOffset = offset(this._targetImage)
     var scrollTop   = window.scrollY
 
     var viewportY = scrollTop + (window.innerHeight / 2)
@@ -236,7 +236,7 @@
     if (!'transition' in document.body.style)
       return this.dispose(this)
 
-	  this._targetImage.addEventListener('transitionend', this.dispose.bind(this))
+    this._targetImage.addEventListener('transitionend', this.dispose.bind(this))
     this._targetImage.addEventListener('webkitTransitionEnd', this.dispose.bind(this))
   }
 
