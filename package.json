@@ -25,6 +25,7 @@
   "scripts": {
     "compress": "uglifyjs --preamble=\"// $npm_package_name - $npm_package_version ($npm_package_homepage)\" js/zoom-vanilla.js > dist/zoom-vanilla.min.js",
     "clean": "rm -rf dist/*",
-    "build": "npm run clean && npm run compress"
+    "build": "npm run clean && npm run compress",
+    "version": "npm run build && git add -u ."
   }
 }
