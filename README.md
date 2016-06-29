@@ -17,7 +17,7 @@ https://spinningarrow.github.io/zoom-vanilla.js
 It zooms in really smoothly, and zooms out when you click again, scroll away,
 or press the <kbd>esc</kbd> key.
 
-If you hold the <kbd>⌘`</kbd> or <kbd>Ctrl</kbd> key, it will open the image in
+If you hold the <kbd>⌘</kbd> or <kbd>Ctrl</kbd> key, it will open the image in
 a new tab.
 
 ### How
