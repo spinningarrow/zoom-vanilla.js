@@ -153,8 +153,17 @@
   Zoom.prototype._zoomOriginal = function () {
     this._targetImageWrap           = document.createElement('div')
     this._targetImageWrap.className = 'zoom-img-wrap'
+	this._targetImageWrap.style.position = 'absolute'
+	this._targetImageWrap.style.top = offset(this._targetImage).top + 'px'
+	this._targetImageWrap.style.left = offset(this._targetImage).left + 'px'
 
-    this._targetImage.parentNode.insertBefore(this._targetImageWrap, this._targetImage)
+	this._targetImageClone = this._targetImage.cloneNode()
+	this._targetImageClone.style.visibility = 'hidden'
+
+	this._targetImage.style.width = this._targetImage.offsetWidth + 'px'
+	this._targetImage.parentNode.replaceChild(this._targetImageClone, this._targetImage)
+
+	document.body.appendChild(this._targetImageWrap)
     this._targetImageWrap.appendChild(this._targetImage)
 
     this._targetImage.classList.add('zoom-img')
@@ -245,7 +254,8 @@
       this._targetImage.classList.remove('zoom-img')
       this._targetImage.setAttribute('data-action', 'zoom')
 
-      this._targetImageWrap.parentNode.replaceChild(this._targetImage, this._targetImageWrap)
+	  this._targetImageClone.parentNode.replaceChild(this._targetImage, this._targetImageClone)
+      this._targetImageWrap.parentNode.removeChild(this._targetImageWrap)
       this._overlay.parentNode.removeChild(this._overlay)
 
       this._body.classList.remove('zoom-overlay-transitioning')
