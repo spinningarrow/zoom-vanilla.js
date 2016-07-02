@@ -2,21 +2,32 @@
 	var OFFSET = 80
 
 	// From http://www.quirksmode.org/js/findpos.html
-	function offset(element) {
-		var offset = {
-			top: 0,
-			left: 0
+	// Memoized for performance (hacky but should work)
+	var offset = (function () {
+		var offsets = {}
+		var defaultOffset = { top: 0, left: 0 }
+
+		return function offset(element) {
+			if (!element.offsetParent) return defaultOffset
+
+			var offsetKey = element.getAttribute('data-offset-memo-key')
+			if (offsetKey) return offsets[offsetKey]
+
+			do {
+				offsetKey = Math.random()
+			} while (offsets[offsetKey])
+
+			element.setAttribute('data-offset-memo-key', offsetKey)
+			offsets[offsetKey] = Object.create(defaultOffset)
+
+			do {
+				offsets[offsetKey].left += element.offsetLeft
+				offsets[offsetKey].top += element.offsetTop
+			} while (element = element.offsetParent)
+
+			return offsets[offsetKey]
 		}
-
-		if (!element.offsetParent) return offset
-
-		do {
-			offset.left += element.offsetLeft
-			offset.top += element.offsetTop
-		} while (element = element.offsetParent)
-
-		return offset
-	}
+	}())
 
 	function zoomListener() {
 		var activeZoom = null
