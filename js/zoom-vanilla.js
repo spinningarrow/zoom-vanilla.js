@@ -25,35 +25,34 @@
 
 		function listen() {
 			document.body.addEventListener('click', function (event) {
-				if (event.target.getAttribute('data-action') === 'zoom') zoom(event)
+				if (event.target.getAttribute('data-action') !== 'zoom' ||
+					event.target.tagName !== 'IMG') return
+
+				zoom(event)
 			})
 		}
 
 		function zoom(event) {
 			event.stopPropagation()
 
-			var target = event.target
-
-			if (!target || target.tagName != 'IMG') return
-
 			if (document.body.classList.contains('zoom-overlay-open')) return
+			if (event.target.width >= (window.innerWidth - OFFSET)) return
 
-			if (event.metaKey || event.ctrlKey) {
-				return window.open((event.target.getAttribute('data-original') || event.target.currentSrc || event.target.src), '_blank')
-			}
-
-			if (target.width >= (window.innerWidth - OFFSET)) return
+			if (event.metaKey || event.ctrlKey) return openInNewWindow()
 
 			closeActiveZoom({ forceDispose: true })
 
-			activeZoom = vanillaZoom(target)
+			activeZoom = vanillaZoom(event.target)
 			activeZoom.zoomImage()
 
-			// todo(fat): probably worth throttling this
-			window.addEventListener('scroll', handleScroll)
-			document.addEventListener('click', handleClick)
-			document.addEventListener('keyup', handleEscPressed)
-			document.addEventListener('touchstart', handleTouchStart)
+			addCloseActiveZoomListeners()
+
+			function openInNewWindow() {
+				window.open(event.target.getAttribute('data-original') ||
+					event.target.currentSrc ||
+					event.target.src,
+					'_blank')
+			}
 		}
 
 		function closeActiveZoom(options) {
@@ -61,13 +60,23 @@
 			if (!activeZoom) return
 
 			activeZoom[options.forceDispose ? 'dispose' : 'close']()
+			removeCloseActiveZoomListeners()
+			activeZoom = null
+		}
 
+		function addCloseActiveZoomListeners() {
+			// todo(fat): probably worth throttling this
+			window.addEventListener('scroll', handleScroll)
+			document.addEventListener('click', handleClick)
+			document.addEventListener('keyup', handleEscPressed)
+			document.addEventListener('touchstart', handleTouchStart)
+		}
+
+		function removeCloseActiveZoomListeners() {
 			window.removeEventListener('scroll', handleScroll)
 			document.removeEventListener('keyup', handleEscPressed)
 			document.removeEventListener('click', handleClick)
 			document.removeEventListener('touchstart', handleTouchStart)
-
-			activeZoom = null
 		}
 
 		function handleScroll(event) {
@@ -100,17 +109,14 @@
 		return { listen: listen }
 	}
 
-	function vanillaZoom(image) {
+	function vanillaZoom(targetImage) {
 		var fullHeight = null
 		var fullWidth = null
 		var overlay = null
 		var imgScaleFactor = null
-		var translateX = null
-		var translateY = null
 
 		var targetImageWrap = null
 		var targetImageClone = null
-		var targetImage = image
 
 		var _MAX_WIDTH = 2560
 		var _MAX_HEIGHT = 4096
@@ -190,15 +196,20 @@
 			var imageCenterY = imageOffset.top + (targetImage.height / 2)
 			var imageCenterX = imageOffset.left + (targetImage.width / 2)
 
-			translateY = viewportY - imageCenterY
-			translateX = viewportX - imageCenterX
+			var translateY = viewportY - imageCenterY
+			var translateX = viewportX - imageCenterX
 
-			targetImage.style.webkitTransform = 'scale(' + imgScaleFactor + ')'
-			targetImageWrap.style.webkitTransform = 'translate(' + translateX + 'px, ' + translateY + 'px) translateZ(0)'
-			targetImage.style.msTransform = 'scale(' + imgScaleFactor + ')'
-			targetImageWrap.style.msTransform = 'translate(' + translateX + 'px, ' + translateY + 'px) translateZ(0)'
-			targetImage.style.transform = 'scale(' + imgScaleFactor + ')'
-			targetImageWrap.style.transform = 'translate(' + translateX + 'px, ' + translateY + 'px) translateZ(0)'
+			var targetImageTransform = 'scale(' + imgScaleFactor + ')'
+			var targetImageWrapTransform =
+				'translate(' + translateX + 'px, ' + translateY + 'px) translateZ(0)'
+
+			targetImage.style.webkitTransform = targetImageTransform
+			targetImage.style.msTransform = targetImageTransform
+			targetImage.style.transform = targetImageTransform
+
+			targetImageWrap.style.webkitTransform = targetImageWrapTransform
+			targetImageWrap.style.msTransform = targetImageWrapTransform
+			targetImageWrap.style.transform = targetImageWrapTransform
 
 			document.body.classList.add('zoom-overlay-open')
 		}
@@ -208,10 +219,11 @@
 			document.body.classList.add('zoom-overlay-transitioning')
 
 			targetImage.style.webkitTransform = ''
-			targetImageWrap.style.webkitTransform = ''
 			targetImage.style.msTransform = ''
-			targetImageWrap.style.msTransform = ''
 			targetImage.style.transform = ''
+
+			targetImageWrap.style.webkitTransform = ''
+			targetImageWrap.style.msTransform = ''
 			targetImageWrap.style.transform = ''
 
 			if (!'transition' in document.body.style) return dispose()
