@@ -4,6 +4,7 @@
   var keyHandlerFn;
   var touchStartFn;
   var touchMoveFn;
+  var disposeFn;
 
   // From http://www.quirksmode.org/js/findpos.html
   function offset(element) {
@@ -153,8 +154,17 @@
   Zoom.prototype._zoomOriginal = function () {
     this._targetImageWrap           = document.createElement('div')
     this._targetImageWrap.className = 'zoom-img-wrap'
+    this._targetImageWrap.style.position = 'absolute'
+    this._targetImageWrap.style.top = offset(this._targetImage).top + 'px'
+    this._targetImageWrap.style.left = offset(this._targetImage).left + 'px'
 
-    this._targetImage.parentNode.insertBefore(this._targetImageWrap, this._targetImage)
+    this._targetImageClone = this._targetImage.cloneNode()
+    this._targetImageClone.style.visibility = 'hidden'
+
+    this._targetImage.style.width = this._targetImage.offsetWidth + 'px'
+    this._targetImage.parentNode.replaceChild(this._targetImageClone, this._targetImage)
+
+    document.body.appendChild(this._targetImageWrap)
     this._targetImageWrap.appendChild(this._targetImage)
 
     this._targetImage.classList.add('zoom-img')
@@ -234,10 +244,11 @@
     this._targetImageWrap.style.transform = ''
 
     if (!'transition' in document.body.style)
-      return this.dispose(this)
+      return this.dispose()
 
-    this._targetImage.addEventListener('transitionend', this.dispose.bind(this))
-    this._targetImage.addEventListener('webkitTransitionEnd', this.dispose.bind(this))
+    disposeFn = this.dispose.bind(this)
+    this._targetImage.addEventListener('transitionend', disposeFn)
+    this._targetImage.addEventListener('webkitTransitionEnd', disposeFn)
   }
 
   Zoom.prototype.dispose = function () {
@@ -245,11 +256,15 @@
       this._targetImage.classList.remove('zoom-img')
       this._targetImage.setAttribute('data-action', 'zoom')
 
-      this._targetImageWrap.parentNode.replaceChild(this._targetImage, this._targetImageWrap)
+      this._targetImageClone.parentNode.replaceChild(this._targetImage, this._targetImageClone)
+      this._targetImageWrap.parentNode.removeChild(this._targetImageWrap)
       this._overlay.parentNode.removeChild(this._overlay)
 
       this._body.classList.remove('zoom-overlay-transitioning')
     }
+
+    this._targetImage.removeEventListener('transitionend', disposeFn)
+    this._targetImage.removeEventListener('webkitTransitionEnd', disposeFn)
   }
 
   new ZoomService().listen()
