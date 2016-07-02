@@ -4,6 +4,7 @@
   var keyHandlerFn;
   var touchStartFn;
   var touchMoveFn;
+  var disposeFn;
 
   // From http://www.quirksmode.org/js/findpos.html
   function offset(element) {
@@ -243,10 +244,11 @@
     this._targetImageWrap.style.transform = ''
 
     if (!'transition' in document.body.style)
-      return this.dispose(this)
+      return this.dispose()
 
-    this._targetImage.addEventListener('transitionend', this.dispose.bind(this))
-    this._targetImage.addEventListener('webkitTransitionEnd', this.dispose.bind(this))
+    disposeFn = this.dispose.bind(this)
+    this._targetImage.addEventListener('transitionend', disposeFn)
+    this._targetImage.addEventListener('webkitTransitionEnd', disposeFn)
   }
 
   Zoom.prototype.dispose = function () {
@@ -260,6 +262,9 @@
 
       this._body.classList.remove('zoom-overlay-transitioning')
     }
+
+    this._targetImage.removeEventListener('transitionend', disposeFn)
+    this._targetImage.removeEventListener('webkitTransitionEnd', disposeFn)
   }
 
   new ZoomService().listen()
