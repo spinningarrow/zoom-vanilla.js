@@ -56,10 +56,11 @@
 			document.addEventListener('touchstart', handleTouchStart)
 		}
 
-		function closeActiveZoom({ forceDispose = false } = {}) {
+		function closeActiveZoom(options) {
+			options = options || { forceDispose: false }
 			if (!activeZoom) return
 
-			activeZoom[forceDispose ? 'dispose' : 'close']()
+			activeZoom[options.forceDispose ? 'dispose' : 'close']()
 
 			window.removeEventListener('scroll', handleScroll)
 			document.removeEventListener('keyup', handleEscPressed)
@@ -96,7 +97,7 @@
 			event.target.removeEventListener('touchmove', handleTouchMove)
 		}
 
-		return { listen }
+		return { listen: listen }
 	}
 
 	function vanillaZoom(image) {
@@ -235,7 +236,7 @@
 			document.body.classList.remove('zoom-overlay-transitioning')
 		}
 
-		return { zoomImage, close, dispose }
+		return { zoomImage: zoomImage, close: close, dispose: dispose }
 	}
 
 	zoomListener().listen()
