@@ -23,6 +23,92 @@
     return offset
   }
 
+	function zoomListener() {
+		var activeZoom = null
+		var initialScrollPosition = null
+		var initialTouchPosition = null
+
+		function listen() {
+			document.body.addEventListener('click', function (event) {
+				if (event.target.getAttribute('data-action') === 'zoom') zoom(event)
+			})
+		}
+
+		function zoom(event) {
+			var target = event.target
+
+			if (!target || target.tagName != 'IMG') return
+
+			if (document.body.classList.contains('zoom-overlay-open')) return
+
+			if (event.metaKey || event.ctrlKey) {
+				return window.open((event.target.getAttribute('data-original') || event.target.currentSrc || event.target.src), '_blank')
+			}
+
+			if (target.width >= (window.innerWidth - Zoom.OFFSET)) return
+
+			closeActiveZoom({ forceDispose: true })
+
+			activeZoom = new Zoom(target)
+			activeZoom.zoomImage()
+
+			// todo(fat): probably worth throttling this
+			window.addEventListener('scroll', handleScroll)
+			document.addEventListener('click', handleClick)
+			document.addEventListener('keyup', handleEscPressed)
+			document.addEventListener('touchstart', handleTouchStart)
+
+			event.stopPropagation()
+		}
+
+		function closeActiveZoom({ forceDispose = false } = {}) {
+			if (!activeZoom) return
+
+			if (forceDispose) {
+				activeZoom.dispose()
+			} else {
+				activeZoom.close()
+			}
+
+			window.removeEventListener('scroll', handleScroll)
+			document.removeEventListener('keyup', handleEscPressed)
+			document.removeEventListener('click', handleClick)
+			document.removeEventListener('touchstart', handleTouchStart)
+
+			activeZoom = null
+		}
+
+		function handleScroll(event) {
+			if (initialScrollPosition === null) initialScrollPosition = window.scrollY
+			var deltaY = initialScrollPosition - window.scrollY
+			if (Math.abs(deltaY) >= 40) closeActiveZoom()
+		}
+
+		function handleEscPressed(event) {
+			if (event.keyCode == 27) closeActiveZoom()
+		}
+
+		function handleClick(event) {
+			event.stopPropagation()
+			event.preventDefault()
+			closeActiveZoom()
+		}
+
+		function handleTouchStart(event) {
+			initialTouchPosition = event.touches[0].pageY
+			event.target.addEventListener('touchmove', handleTouchMove)
+		}
+
+		function handleTouchMove(event) {
+			if (Math.abs(event.touches[0].pageY - initialTouchPosition) > 10) {
+				closeActiveZoom()
+				event.target.removeEventListener('touchmove', handleTouchMove)
+			}
+		}
+
+		return { listen }
+	}
+
   /**
    * The zoom service
    */
@@ -267,6 +353,5 @@
     this._targetImage.removeEventListener('webkitTransitionEnd', disposeFn)
   }
 
-  new ZoomService().listen()
-
+  zoomListener().listen()
 }()
