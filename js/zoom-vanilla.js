@@ -6,7 +6,7 @@
   var touchMoveFn;
   var disposeFn;
 
-  // From http://www.quirksmode.org/js/findpos.html
+  // From http://youmightnotneedjquery.com/#offset
   function offset(element) {
     var rect = element.getBoundingClientRect()
 
