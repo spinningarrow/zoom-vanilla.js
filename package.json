@@ -23,12 +23,13 @@
     "uglify-js": "^2.4.21"
   },
   "scripts": {
+    "_echo_done": "echo \"\\033[1;32m...done\\033[0m (`date`)\"",
     "compress": "uglifyjs --source-map=dist/zoom-vanilla.min.js.map --source-map-url='/dist/zoom-vanilla.min.js.map' --source-map-root='/' --preamble=\"// $npm_package_name - $npm_package_version ($npm_package_homepage)\" js/zoom-vanilla.js > dist/zoom-vanilla.min.js",
     "clean": "rm -rf dist/*",
     "build": "npm run clean && npm run compress",
-	"start": "http-server",
+    "start": "http-server",
     "version": "npm run build && git add -u .",
-    "watch": "watch 'npm run compress' . -d --ignoreDirectoryPattern=/dist/g"
+    "watch": "watch 'npm run compress && npm run _echo_done' js"
   },
   "dependencies": {
     "http-server": "^0.9.0",
