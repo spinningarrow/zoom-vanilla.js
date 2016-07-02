@@ -1,22 +1,22 @@
 +function () { "use strict";
 	var OFFSET = 80
 
-  // From http://www.quirksmode.org/js/findpos.html
-  function offset(element) {
-    var offset = {
-      top: 0,
-      left: 0
-    }
+	// From http://www.quirksmode.org/js/findpos.html
+	function offset(element) {
+		var offset = {
+			top: 0,
+			left: 0
+		}
 
-    if (!element.offsetParent) return offset
+		if (!element.offsetParent) return offset
 
-    do {
-      offset.left += element.offsetLeft
-      offset.top += element.offsetTop
-    } while (element = element.offsetParent)
+		do {
+			offset.left += element.offsetLeft
+			offset.top += element.offsetTop
+		} while (element = element.offsetParent)
 
-    return offset
-  }
+		return offset
+	}
 
 	function zoomListener() {
 		var activeZoom = null
