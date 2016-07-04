@@ -6,21 +6,14 @@
   var touchMoveFn;
   var disposeFn;
 
-  // From http://www.quirksmode.org/js/findpos.html
+  // From http://youmightnotneedjquery.com/#offset
   function offset(element) {
-    var offset = {
-      top: 0,
-      left: 0
+    var rect = element.getBoundingClientRect()
+
+    return {
+      top: rect.top + document.body.scrollTop,
+      left: rect.left + document.body.scrollLeft
     }
-
-    if (!element.offsetParent) return offset
-
-    do {
-      offset.left += element.offsetLeft
-      offset.top += element.offsetTop
-    } while (element = element.offsetParent)
-
-    return offset
   }
 
   /**
