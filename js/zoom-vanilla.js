@@ -250,6 +250,7 @@
 			if (!targetImageWrap || !targetImageWrap.parentNode) return
 
 			targetImage.classList.remove('zoom-img')
+			targetImage.style.width = ''
 			targetImage.setAttribute('data-action', 'zoom')
 
 			targetImageClone.parentNode.replaceChild(targetImage, targetImageClone)
