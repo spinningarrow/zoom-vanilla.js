@@ -57,13 +57,13 @@
 			activeZoom.zoomImage()
 
 			addCloseActiveZoomListeners()
+		}
 
-			function openInNewWindow() {
-				window.open(event.target.getAttribute('data-original') ||
-					event.target.currentSrc ||
-					event.target.src,
-					'_blank')
-			}
+		function openInNewWindow() {
+			window.open(event.target.getAttribute('data-original') ||
+				event.target.currentSrc ||
+				event.target.src,
+				'_blank')
 		}
 
 		function closeActiveZoom(options) {
@@ -120,12 +120,13 @@
 		return { listen: listen }
 	}
 
-	function vanillaZoom(targetImage) {
+	var vanillaZoom = (function () {
 		var fullHeight = null
 		var fullWidth = null
 		var overlay = null
 		var imgScaleFactor = null
 
+		var targetImage = null
 		var targetImageWrap = null
 		var targetImageClone = null
 
@@ -260,8 +261,11 @@
 			document.body.classList.remove('zoom-overlay-transitioning')
 		}
 
-		return { zoomImage: zoomImage, close: close, dispose: dispose }
-	}
+		return function (target) {
+			targetImage = target
+			return { zoomImage: zoomImage, close: close, dispose: dispose }
+		}
+	}())
 
 	zoomListener().listen()
 }()
