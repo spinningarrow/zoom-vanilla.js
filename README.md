@@ -15,17 +15,17 @@ will open the image in a new tab instead of zooming it.
 
 ## Usage
 
-Download `dist/zoom-vanilla.min.js` and `css/zoom.css` from GitHub, or install
-via npm by running `npm i zoom-vanilla.js`.
+1. Download `dist/zoom-vanilla.min.js` and `css/zoom.css` from GitHub, or
+   install via npm by running `npm i zoom-vanilla.js`.
 
-1. Add the `zoom-vanilla.min.js` and `zoom.css` files to your HTML page:
+2. Add the `zoom-vanilla.min.js` and `zoom.css` files to your HTML page:
 
   ```html
   <link href="css/zoom.css" rel="stylesheet">
   <script src="dist/zoom-vanilla.min.js"></script>
   ```
 
-2. Add a `data-action="zoom"` attribute to the images you want to make
+3. Add a `data-action="zoom"` attribute to the images you want to make
    zoomable:
 
   ```html
