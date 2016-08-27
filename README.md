@@ -36,3 +36,13 @@ an issue! Thanks!
 
 [medium-zoom-article]: https://medium.com/designing-medium/image-zoom-on-medium-24d146fc0c20
 [fat-zoom]: https://github.com/fat/zoom.js
+
+## Build
+
+- Clone this repository and run `npm i` before starting development.
+- To easily view the demo page, the project comes bundled with an HTTP server.
+Start it by executing `npm start`.
+- To build the minified JS, execute `npm run build`.
+- While developing, it gets annoying to keep executing `npm run build` every time
+a change is made. Instead execute `npm run watch` which will watch the
+`zoom-vanilla.js` file for changes and create the minified JS automatically.
