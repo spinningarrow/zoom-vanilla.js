@@ -1,265 +1,253 @@
 +function () { "use strict";
-  var scrollHandlerFn;
-  var clickHandlerFn;
-  var keyHandlerFn;
-  var touchStartFn;
-  var touchMoveFn;
-  var disposeFn;
-
-  // From http://youmightnotneedjquery.com/#offset
-  function offset(element) {
-    var rect = element.getBoundingClientRect()
-
-    return {
-      top: rect.top + document.body.scrollTop,
-      left: rect.left + document.body.scrollLeft
-    }
-  }
-
-  /**
-   * The zoom service
-   */
-  function ZoomService () {
-    this._activeZoom            =
-    this._initialScrollPosition =
-    this._initialTouchPosition  =
-    this._touchMoveListener     = null
-
-    this._document = document
-    this._window   = window
-    this._body     = document.body
-  }
-
-  ZoomService.prototype.listen = function () {
-    document.body.addEventListener('click', function (event) {
-      if (event.target.getAttribute('data-action') === 'zoom') this._zoom(event)
-    }.bind(this))
-  }
-
-  ZoomService.prototype._zoom = function (e) {
-    var target = e.target
-
-    if (!target || target.tagName != 'IMG') return
-
-    if (this._body.classList.contains('zoom-overlay-open')) return
-
-    if (e.metaKey || e.ctrlKey) {
-      return window.open((e.target.getAttribute('data-original') || e.target.currentSrc || e.target.src), '_blank')
-    }
-
-    if (target.width >= (window.innerWidth - Zoom.OFFSET)) return
-
-    this._activeZoomClose(true)
-
-    this._activeZoom = new Zoom(target)
-    this._activeZoom.zoomImage()
-
-    scrollHandlerFn = this._scrollHandler.bind(this)
-    clickHandlerFn = this._clickHandler.bind(this)
-    keyHandlerFn = this._keyHandler.bind(this)
-    touchStartFn = this._touchStart.bind(this)
-
-    // todo(fat): probably worth throttling this
-    this._window.addEventListener('scroll', scrollHandlerFn)
-    this._document.addEventListener('click', clickHandlerFn)
-    this._document.addEventListener('keyup', keyHandlerFn)
-    this._document.addEventListener('touchstart', touchStartFn)
-
-    e.stopPropagation()
-  }
-
-  ZoomService.prototype._activeZoomClose = function (forceDispose) {
-    if (!this._activeZoom) return
-
-    if (forceDispose) {
-      this._activeZoom.dispose()
-    } else {
-      this._activeZoom.close()
-    }
-
-    this._window.removeEventListener('scroll', scrollHandlerFn)
-    this._document.removeEventListener('click', clickHandlerFn)
-    this._document.removeEventListener('keyup', keyHandlerFn)
-    this._document.removeEventListener('touchstart', touchStartFn)
-
-    this._activeZoom = null
-  }
-
-  ZoomService.prototype._scrollHandler = function (e) {
-    if (this._initialScrollPosition === null) this._initialScrollPosition = window.scrollY
-    var deltaY = this._initialScrollPosition - window.scrollY
-    if (Math.abs(deltaY) >= 40) this._activeZoomClose()
-  }
-
-  ZoomService.prototype._keyHandler = function (e) {
-    if (e.keyCode == 27) this._activeZoomClose()
-  }
-
-  ZoomService.prototype._clickHandler = function (e) {
-    e.stopPropagation()
-    e.preventDefault()
-    this._activeZoomClose()
-  }
+	var OFFSET = 80
+
+	// From http://youmightnotneedjquery.com/#offset
+	function offset(element) {
+		var rect = element.getBoundingClientRect()
+
+		return {
+			top: rect.top + document.body.scrollTop,
+			left: rect.left + document.body.scrollLeft
+		}
+	}
+
+	function zoomListener() {
+		var activeZoom = null
+		var initialScrollPosition = null
+		var initialTouchPosition = null
+
+		function listen() {
+			document.body.addEventListener('click', function (event) {
+				if (event.target.getAttribute('data-action') !== 'zoom' ||
+					event.target.tagName !== 'IMG') return
+
+				zoom(event)
+			})
+		}
+
+		function zoom(event) {
+			event.stopPropagation()
+
+			if (document.body.classList.contains('zoom-overlay-open')) return
+			if (event.target.width >= (window.innerWidth - OFFSET)) return
+
+			if (event.metaKey || event.ctrlKey) return openInNewWindow()
+
+			closeActiveZoom({ forceDispose: true })
+
+			activeZoom = vanillaZoom(event.target)
+			activeZoom.zoomImage()
+
+			addCloseActiveZoomListeners()
+		}
+
+		function openInNewWindow() {
+			window.open(event.target.getAttribute('data-original') ||
+				event.target.currentSrc ||
+				event.target.src,
+				'_blank')
+		}
+
+		function closeActiveZoom(options) {
+			options = options || { forceDispose: false }
+			if (!activeZoom) return
+
+			activeZoom[options.forceDispose ? 'dispose' : 'close']()
+			removeCloseActiveZoomListeners()
+			activeZoom = null
+		}
+
+		function addCloseActiveZoomListeners() {
+			// todo(fat): probably worth throttling this
+			window.addEventListener('scroll', handleScroll)
+			document.addEventListener('click', handleClick)
+			document.addEventListener('keyup', handleEscPressed)
+			document.addEventListener('touchstart', handleTouchStart)
+		}
+
+		function removeCloseActiveZoomListeners() {
+			window.removeEventListener('scroll', handleScroll)
+			document.removeEventListener('keyup', handleEscPressed)
+			document.removeEventListener('click', handleClick)
+			document.removeEventListener('touchstart', handleTouchStart)
+		}
+
+		function handleScroll(event) {
+			if (initialScrollPosition === null) initialScrollPosition = window.scrollY
+			var deltaY = initialScrollPosition - window.scrollY
+			if (Math.abs(deltaY) >= 40) closeActiveZoom()
+		}
+
+		function handleEscPressed(event) {
+			if (event.keyCode == 27) closeActiveZoom()
+		}
+
+		function handleClick(event) {
+			event.stopPropagation()
+			event.preventDefault()
+			closeActiveZoom()
+		}
+
+		function handleTouchStart(event) {
+			initialTouchPosition = event.touches[0].pageY
+			event.target.addEventListener('touchmove', handleTouchMove)
+		}
+
+		function handleTouchMove(event) {
+			if (Math.abs(event.touches[0].pageY - initialTouchPosition) <= 10) return
+			closeActiveZoom()
+			event.target.removeEventListener('touchmove', handleTouchMove)
+		}
+
+		return { listen: listen }
+	}
 
-  ZoomService.prototype._touchStart = function (e) {
-    this._initialTouchPosition = e.touches[0].pageY
+	var vanillaZoom = (function () {
+		var fullHeight = null
+		var fullWidth = null
+		var overlay = null
+		var imgScaleFactor = null
 
-    touchMoveFn = this._touchMove.bind(this)
-    e.target.addEventListener('touchmove', touchMoveFn)
-  }
+		var targetImage = null
+		var targetImageWrap = null
+		var targetImageClone = null
 
-  ZoomService.prototype._touchMove = function (e) {
-    if (Math.abs(e.touches[0].pageY - this._initialTouchPosition) > 10) {
-      this._activeZoomClose()
-      e.target.removeEventListener('touchmove', touchMoveFn)
-    }
-  }
+		var _MAX_WIDTH = 2560
+		var _MAX_HEIGHT = 4096
 
+		function zoomImage() {
+			var img = document.createElement('img')
+			img.onload = function () {
+				fullHeight = Number(img.height)
+				fullWidth = Number(img.width)
+				zoomOriginal()
+			}
+			img.src = targetImage.currentSrc || targetImage.src
+		}
 
-  /**
-   * The zoom object
-   */
-  function Zoom (img) {
-    this._fullHeight      =
-    this._fullWidth       =
-    this._overlay         =
-    this._targetImageWrap = null
+		function zoomOriginal() {
+			targetImageWrap = document.createElement('div')
+			targetImageWrap.className = 'zoom-img-wrap'
+			targetImageWrap.style.position = 'absolute'
+			targetImageWrap.style.top = offset(targetImage).top + 'px'
+			targetImageWrap.style.left = offset(targetImage).left + 'px'
 
-    this._targetImage = img
+			targetImageClone = targetImage.cloneNode()
+			targetImageClone.style.visibility = 'hidden'
 
-    this._body = document.body
-  }
+			targetImage.style.width = targetImage.offsetWidth + 'px'
+			targetImage.parentNode.replaceChild(targetImageClone, targetImage)
 
-  Zoom.OFFSET = 80
-  Zoom._MAX_WIDTH = 2560
-  Zoom._MAX_HEIGHT = 4096
+			document.body.appendChild(targetImageWrap)
+			targetImageWrap.appendChild(targetImage)
 
-  Zoom.prototype.zoomImage = function () {
-    var img = document.createElement('img')
-    img.onload = function () {
-      this._fullHeight = Number(img.height)
-      this._fullWidth = Number(img.width)
-      this._zoomOriginal()
-    }.bind(this)
-    img.src = this._targetImage.currentSrc || this._targetImage.src
-  }
+			targetImage.classList.add('zoom-img')
+			targetImage.setAttribute('data-action', 'zoom-out')
 
-  Zoom.prototype._zoomOriginal = function () {
-    this._targetImageWrap           = document.createElement('div')
-    this._targetImageWrap.className = 'zoom-img-wrap'
-    this._targetImageWrap.style.position = 'absolute'
-    this._targetImageWrap.style.top = offset(this._targetImage).top + 'px'
-    this._targetImageWrap.style.left = offset(this._targetImage).left + 'px'
+			overlay = document.createElement('div')
+			overlay.className = 'zoom-overlay'
 
-    this._targetImageClone = this._targetImage.cloneNode()
-    this._targetImageClone.style.visibility = 'hidden'
+			document.body.appendChild(overlay)
 
-    this._targetImage.style.width = this._targetImage.offsetWidth + 'px'
-    this._targetImage.parentNode.replaceChild(this._targetImageClone, this._targetImage)
+			calculateZoom()
+			triggerAnimation()
+		}
 
-    document.body.appendChild(this._targetImageWrap)
-    this._targetImageWrap.appendChild(this._targetImage)
+		function calculateZoom() {
+			targetImage.offsetWidth // repaint before animating
 
-    this._targetImage.classList.add('zoom-img')
-    this._targetImage.setAttribute('data-action', 'zoom-out')
+			var originalFullImageWidth  = fullWidth
+			var originalFullImageHeight = fullHeight
 
-    this._overlay           = document.createElement('div')
-    this._overlay.className = 'zoom-overlay'
+			var scrollTop = window.scrollY
 
-    document.body.appendChild(this._overlay)
+			var maxScaleFactor = originalFullImageWidth / targetImage.width
 
-    this._calculateZoom()
-    this._triggerAnimation()
-  }
+			var viewportHeight = window.innerHeight - OFFSET
+			var viewportWidth  = window.innerWidth - OFFSET
 
-  Zoom.prototype._calculateZoom = function () {
-    this._targetImage.offsetWidth // repaint before animating
+			var imageAspectRatio    = originalFullImageWidth / originalFullImageHeight
+			var viewportAspectRatio = viewportWidth / viewportHeight
 
-    var originalFullImageWidth  = this._fullWidth
-    var originalFullImageHeight = this._fullHeight
+			if (originalFullImageWidth < viewportWidth && originalFullImageHeight < viewportHeight) {
+				imgScaleFactor = maxScaleFactor
+			} else if (imageAspectRatio < viewportAspectRatio) {
+				imgScaleFactor = (viewportHeight / originalFullImageHeight) * maxScaleFactor
+			} else {
+				imgScaleFactor = (viewportWidth / originalFullImageWidth) * maxScaleFactor
+			}
+		}
 
-    var scrollTop = window.scrollY
+		function triggerAnimation() {
+			targetImage.offsetWidth // repaint before animating
 
-    var maxScaleFactor = originalFullImageWidth / this._targetImage.width
+			var imageOffset = offset(targetImage)
+			var scrollTop   = window.scrollY
 
-    var viewportHeight = (window.innerHeight - Zoom.OFFSET)
-    var viewportWidth  = (window.innerWidth - Zoom.OFFSET)
+			var viewportY = scrollTop + (window.innerHeight / 2)
+			var viewportX = (window.innerWidth / 2)
 
-    var imageAspectRatio    = originalFullImageWidth / originalFullImageHeight
-    var viewportAspectRatio = viewportWidth / viewportHeight
+			var imageCenterY = imageOffset.top + (targetImage.height / 2)
+			var imageCenterX = imageOffset.left + (targetImage.width / 2)
 
-    if (originalFullImageWidth < viewportWidth && originalFullImageHeight < viewportHeight) {
-      this._imgScaleFactor = maxScaleFactor
+			var translateY = viewportY - imageCenterY
+			var translateX = viewportX - imageCenterX
 
-    } else if (imageAspectRatio < viewportAspectRatio) {
-      this._imgScaleFactor = (viewportHeight / originalFullImageHeight) * maxScaleFactor
+			var targetImageTransform = 'scale(' + imgScaleFactor + ')'
+			var targetImageWrapTransform =
+				'translate(' + translateX + 'px, ' + translateY + 'px) translateZ(0)'
 
-    } else {
-      this._imgScaleFactor = (viewportWidth / originalFullImageWidth) * maxScaleFactor
-    }
-  }
+			targetImage.style.webkitTransform = targetImageTransform
+			targetImage.style.msTransform = targetImageTransform
+			targetImage.style.transform = targetImageTransform
 
-  Zoom.prototype._triggerAnimation = function () {
-    this._targetImage.offsetWidth // repaint before animating
+			targetImageWrap.style.webkitTransform = targetImageWrapTransform
+			targetImageWrap.style.msTransform = targetImageWrapTransform
+			targetImageWrap.style.transform = targetImageWrapTransform
 
-    var imageOffset = offset(this._targetImage)
-    var scrollTop   = window.scrollY
+			document.body.classList.add('zoom-overlay-open')
+		}
 
-    var viewportY = scrollTop + (window.innerHeight / 2)
-    var viewportX = (window.innerWidth / 2)
+		function close() {
+			document.body.classList.remove('zoom-overlay-open')
+			document.body.classList.add('zoom-overlay-transitioning')
 
-    var imageCenterY = imageOffset.top + (this._targetImage.height / 2)
-    var imageCenterX = imageOffset.left + (this._targetImage.width / 2)
+			targetImage.style.webkitTransform = ''
+			targetImage.style.msTransform = ''
+			targetImage.style.transform = ''
 
-    this._translateY = viewportY - imageCenterY
-    this._translateX = viewportX - imageCenterX
+			targetImageWrap.style.webkitTransform = ''
+			targetImageWrap.style.msTransform = ''
+			targetImageWrap.style.transform = ''
 
-    this._targetImage.style.webkitTransform = 'scale(' + this._imgScaleFactor + ')'
-    this._targetImageWrap.style.webkitTransform = 'translate(' + this._translateX + 'px, ' + this._translateY + 'px) translateZ(0)'
-    this._targetImage.style.msTransform = 'scale(' + this._imgScaleFactor + ')'
-    this._targetImageWrap.style.msTransform = 'translate(' + this._translateX + 'px, ' + this._translateY + 'px) translateZ(0)'
-    this._targetImage.style.transform = 'scale(' + this._imgScaleFactor + ')'
-    this._targetImageWrap.style.transform = 'translate(' + this._translateX + 'px, ' + this._translateY + 'px) translateZ(0)'
+			if (!'transition' in document.body.style) return dispose()
 
-    this._body.classList.add('zoom-overlay-open')
-  }
+			targetImage.addEventListener('transitionend', dispose)
+			targetImage.addEventListener('webkitTransitionEnd', dispose)
+		}
 
-  Zoom.prototype.close = function () {
-    this._body.classList.remove('zoom-overlay-open')
-    this._body.classList.add('zoom-overlay-transitioning')
+		function dispose() {
+			targetImage.removeEventListener('transitionend', dispose)
+			targetImage.removeEventListener('webkitTransitionEnd', dispose)
 
-    // we use setStyle here so that the correct vender prefix for transform is used
-    this._targetImage.style.webkitTransform = ''
-    this._targetImageWrap.style.webkitTransform = ''
-    this._targetImage.style.msTransform = ''
-    this._targetImageWrap.style.msTransform = ''
-    this._targetImage.style.transform = ''
-    this._targetImageWrap.style.transform = ''
+			if (!targetImageWrap || !targetImageWrap.parentNode) return
 
-    if (!'transition' in document.body.style)
-      return this.dispose()
+			targetImage.classList.remove('zoom-img')
+			targetImage.style.width = ''
+			targetImage.setAttribute('data-action', 'zoom')
 
-    disposeFn = this.dispose.bind(this)
-    this._targetImage.addEventListener('transitionend', disposeFn)
-    this._targetImage.addEventListener('webkitTransitionEnd', disposeFn)
-  }
+			targetImageClone.parentNode.replaceChild(targetImage, targetImageClone)
+			targetImageWrap.parentNode.removeChild(targetImageWrap)
+			overlay.parentNode.removeChild(overlay)
 
-  Zoom.prototype.dispose = function () {
-    if (this._targetImageWrap && this._targetImageWrap.parentNode) {
-      this._targetImage.classList.remove('zoom-img')
-      this._targetImage.setAttribute('data-action', 'zoom')
+			document.body.classList.remove('zoom-overlay-transitioning')
+		}
 
-      this._targetImageClone.parentNode.replaceChild(this._targetImage, this._targetImageClone)
-      this._targetImageWrap.parentNode.removeChild(this._targetImageWrap)
-      this._overlay.parentNode.removeChild(this._overlay)
+		return function (target) {
+			targetImage = target
+			return { zoomImage: zoomImage, close: close, dispose: dispose }
+		}
+	}())
 
-      this._body.classList.remove('zoom-overlay-transitioning')
-    }
-
-    this._targetImage.removeEventListener('transitionend', disposeFn)
-    this._targetImage.removeEventListener('webkitTransitionEnd', disposeFn)
-  }
-
-  new ZoomService().listen()
-
+	zoomListener().listen()
 }()
