@@ -1,11 +1,9 @@
 # zoom-vanilla.js
 
-A simple library for image zooming; as seen on
-[Medium](https://medium.com/designing-medium/image-zoom-on-medium-24d146fc0c20).
+A simple library for image zooming; [as seen on Medium][medium-zoom-article].
 
-This is a fork of the [original jQuery plugin by
-fat](https://github.com/fat/zoom.js). This version does **not** depend on
-jQuery or any third-party libraries.
+This is a fork of the [jQuery plugin by fat][fat-zoom]. This version does
+**not** depend on jQuery or any third-party libraries.
 
 **Live demo**: https://spinningarrow.github.io/zoom-vanilla.js
 
@@ -19,19 +17,22 @@ will open the image in a new tab instead of zooming it.
 
 1. Add the `zoom-vanilla.min.js` and `zoom.css` files to your HTML page:
 
-```html
-<link href="css/zoom.css" rel="stylesheet">
-<script src="dist/zoom-vanilla.min.js"></script>
-```
+  ```html 
+  <link href="css/zoom.css" rel="stylesheet">
+  <script src="dist/zoom-vanilla.min.js"></script>
+  ```
 
 2. Add a `data-action="zoom"` attribute to the images you want to make
    zoomable:
 
-```html
-<img src="img/blog_post_featured.png" data-action="zoom">
-```
+  ```html
+  <img src="img/blog_post_featured.png" data-action="zoom">
+  ```
 
 ## Browser support
 
 zoom-vanilla.js should (in theory) work in all modern browsers. If not, create
 an issue! Thanks!
+
+[medium-zoom-article]: https://medium.com/designing-medium/image-zoom-on-medium-24d146fc0c20
+[fat-zoom]: https://github.com/fat/zoom.js
