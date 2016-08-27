@@ -1,28 +1,23 @@
-# ZOOM-VANILLA.JS
+# zoom-vanilla.js
 
 A simple library for image zooming; as seen on
 [Medium](https://medium.com/designing-medium/image-zoom-on-medium-24d146fc0c20).
 
 This is a fork of the [original jQuery plugin by
 fat](https://github.com/fat/zoom.js). This version does **not** depend on
-jQuery.
+jQuery or any third-party libraries.
 
-I'm also trying not to modify the original code too much so that consuming
-upstream changes (if any) becomes easier.
-
-### Demo
-
-https://spinningarrow.github.io/zoom-vanilla.js
+**Live demo**: https://spinningarrow.github.io/zoom-vanilla.js
 
 It zooms in really smoothly, and zooms out when you click again, scroll away,
 or press the <kbd>esc</kbd> key.
 
-If you hold the <kbd>⌘</kbd> or <kbd>Ctrl</kbd> key, it will open the image in
-a new tab.
+If you hold the <kbd>⌘</kbd> or <kbd>Ctrl</kbd> key when clicking the image, it
+will open the image in a new tab instead of zooming it.
 
-### How
+## Usage
 
-1. Link the zoom-vanilla.min.js and zoom.css files to your site or application.
+1. Add the `zoom-vanilla.min.js` and `zoom.css` files to your HTML page:
 
 ```html
 <link href="css/zoom.css" rel="stylesheet">
@@ -30,13 +25,13 @@ a new tab.
 ```
 
 2. Add a `data-action="zoom"` attribute to the images you want to make
-   zoomable. For example:
+   zoomable:
 
 ```html
 <img src="img/blog_post_featured.png" data-action="zoom">
 ```
 
-### Where
+## Browser support
 
 zoom-vanilla.js should (in theory) work in all modern browsers. If not, create
 an issue! Thanks!
