@@ -42,8 +42,8 @@ an issue! Thanks!
 
 ## Known issues
 
-1. The image is appending to the body; use an appropriate CSS selector for extra styling
-2. Zooming may not be quite right if the aspect ratio of the image is changed
+- The image is appended to the body; use an appropriate CSS selector for extra styling
+- Zooming may not be quite right if the aspect ratio of the image is changed
 
 ## Build
 
