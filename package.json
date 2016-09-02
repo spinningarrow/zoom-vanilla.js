@@ -1,6 +1,6 @@
 {
   "name": "zoom-vanilla.js",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "It's the best way to zoom an image",
   "main": "js/zoom-vanilla.js",
   "repository": {
@@ -26,7 +26,7 @@
   },
   "scripts": {
     "_echo_done": "echo [`date`] \"\\033[1;32mzoom-vanilla.min.js rebuilt\\033[0m\"",
-    "compress": "uglifyjs --source-map=dist/zoom-vanilla.min.js.map --source-map-url='/dist/zoom-vanilla.min.js.map' --source-map-root='/' --preamble=\"// $npm_package_name - $npm_package_version ($npm_package_homepage)\" js/zoom-vanilla.js > dist/zoom-vanilla.min.js",
+    "compress": "uglifyjs --compress --mangle --source-map=dist/zoom-vanilla.min.js.map --source-map-url='/dist/zoom-vanilla.min.js.map' --source-map-root='/' --preamble=\"// $npm_package_name - $npm_package_version ($npm_package_homepage)\" js/zoom-vanilla.js > dist/zoom-vanilla.min.js",
     "clean": "rm -rf dist/*",
     "build": "npm run clean && npm run compress",
     "start": "http-server",

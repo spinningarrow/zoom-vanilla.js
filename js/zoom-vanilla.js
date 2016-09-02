@@ -112,9 +112,6 @@
 		var targetImageWrap = null
 		var targetImageClone = null
 
-		var _MAX_WIDTH = 2560
-		var _MAX_HEIGHT = 4096
-
 		function zoomImage() {
 			var img = document.createElement('img')
 			img.onload = function () {
@@ -158,8 +155,6 @@
 
 			var originalFullImageWidth  = fullWidth
 			var originalFullImageHeight = fullHeight
-
-			var scrollTop = window.scrollY
 
 			var maxScaleFactor = originalFullImageWidth / targetImage.width
 

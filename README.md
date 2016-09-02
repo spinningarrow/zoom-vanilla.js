@@ -3,7 +3,8 @@
 A simple library for image zooming; [as seen on Medium][medium-zoom-article].
 
 This is a fork of the [jQuery plugin by fat][fat-zoom]. This version does
-**not** depend on jQuery or any third-party libraries.
+**not** depend on jQuery or any third-party libraries and is of equivalent file
+size.
 
 **Live demo**: https://spinningarrow.github.io/zoom-vanilla.js
 
