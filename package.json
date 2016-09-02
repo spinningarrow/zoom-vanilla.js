@@ -20,7 +20,9 @@
   },
   "homepage": "https://github.com/spinningarrow/zoom-vanilla.js",
   "devDependencies": {
-    "uglify-js": "^2.4.21"
+    "http-server": "^0.9.0",
+    "uglify-js": "^2.7.3",
+    "watch": "^0.19.2"
   },
   "scripts": {
     "_echo_done": "echo [`date`] \"\\033[1;32mzoom-vanilla.min.js rebuilt\\033[0m\"",
@@ -30,9 +32,5 @@
     "start": "http-server",
     "version": "npm run build && git add -u .",
     "watch": "watch 'npm run compress && npm run _echo_done' js --ignoreDotFiles"
-  },
-  "dependencies": {
-    "http-server": "^0.9.0",
-    "watch": "^0.19.1"
   }
 }
