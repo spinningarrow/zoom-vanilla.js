@@ -22,8 +22,8 @@ will open the image in a new tab instead of zooming it.
 2. Add the `zoom-vanilla.min.js` and `zoom.css` files to your HTML page:
 
   ```html
-  <link href="css/zoom.css" rel="stylesheet">
-  <script src="dist/zoom-vanilla.min.js"></script>
+  <link href="css/zoom.css" rel="stylesheet"> <!-- inside <head> -->
+  <script src="dist/zoom-vanilla.min.js"></script> <!-- before </body> -->
   ```
 
 3. Add a `data-action="zoom"` attribute to the images you want to make
