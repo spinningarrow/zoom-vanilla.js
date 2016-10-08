@@ -4,9 +4,8 @@
 	// From http://youmightnotneedjquery.com/#offset
 	function offset(element) {
 		var rect = element.getBoundingClientRect()
-
 		return {
-			top: rect.top + document.body.scrollTop,
+			top: rect.top + window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0,
 			left: rect.left + document.body.scrollLeft
 		}
 	}
