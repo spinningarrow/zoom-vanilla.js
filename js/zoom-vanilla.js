@@ -72,8 +72,8 @@
 		}
 
 		function handleScroll(event) {
-			if (initialScrollPosition === null) initialScrollPosition = window.scrollY
-			var deltaY = initialScrollPosition - window.scrollY
+			if (initialScrollPosition === null) initialScrollPosition = window.pageYOffset
+			var deltaY = initialScrollPosition - window.pageYOffset
 			if (Math.abs(deltaY) >= 40) closeActiveZoom()
 		}
 
@@ -176,7 +176,7 @@
 			targetImage.offsetWidth // repaint before animating
 
 			var imageOffset = offset(targetImage)
-			var scrollTop   = window.scrollY
+			var scrollTop   = window.pageYOffset
 
 			var viewportY = scrollTop + (window.innerHeight / 2)
 			var viewportX = (window.innerWidth / 2)
