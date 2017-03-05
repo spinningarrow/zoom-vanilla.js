@@ -48,10 +48,10 @@ an issue! Thanks!
 
 ## Build
 
-- Clone this repository and run `npm i` before starting development.
-- To easily view the demo page, the project comes bundled with an HTTP server.
-Start it by executing `npm start`.
-- To build the minified JS, execute `npm run build`.
-- While developing, it gets annoying to keep executing `npm run build` every time
-a change is made. Instead execute `npm run watch` which will watch the
-`zoom-vanilla.js` file for changes and create the minified JS automatically.
+- `git clone` the repo
+- `npm i` to install dev dependencies
+- `npm start` to start a simple HTTP server (makes it easy to view the demo
+  page)
+- `npm run build` to build the minified JS
+- `npm run watch` to rebuild when any files change (recommended for
+  development)
