@@ -43,7 +43,8 @@ an issue! Thanks!
 
 ## Known issues
 
-- The image is appended to the body; use an appropriate CSS selector for extra styling
+- The image is appended to the body; use an appropriate CSS selector for extra
+  styling
 - Zooming may not be quite right if the aspect ratio of the image is changed
 
 ## Build
