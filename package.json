@@ -1,6 +1,6 @@
 {
   "name": "zoom-vanilla.js",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "It's the best way to zoom an image",
   "main": "js/zoom-vanilla.js",
   "repository": {
