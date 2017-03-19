@@ -22,7 +22,7 @@ will open the image in a new tab instead of zooming it.
 2. Add the `zoom-vanilla.min.js` and `zoom.css` files to your HTML page:
 
   ```html
-  <link href="css/zoom.css" rel="stylesheet"> <!-- inside <head> -->
+  <link href="dist/zoom.css" rel="stylesheet"> <!-- inside <head> -->
   <script src="dist/zoom-vanilla.min.js"></script> <!-- before </body> -->
   ```
 
@@ -53,6 +53,6 @@ an issue! Thanks!
 - `npm i` to install dev dependencies
 - `npm start` to start a simple HTTP server (makes it easy to view the demo
   page)
-- `npm run build` to build the minified JS
-- `npm run watch` to rebuild when any files change (recommended for
+- `npm run build` to build the minified JS and vendor-prefixed CSS
+- `npm run watch` to rebuild when any JS files change (recommended for
   development)
