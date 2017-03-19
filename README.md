@@ -2,9 +2,13 @@
 
 A simple library for image zooming; [as seen on Medium][medium-zoom-article].
 
-This is a fork of the [jQuery plugin by fat][fat-zoom]. This version does
-**not** depend on jQuery or any third-party libraries and is of equivalent file
-size.
+This is a fork of the [jQuery plugin by fat][fat-zoom]. These are the key differences:
+
+1. No jQuery dependency; vanilla JavaScript only
+2. Equivalent file size (the minified version is slightly smaller due to better
+   minification)
+3. Includes bug fixes not present in the original, since the original is no
+   longer being maintained
 
 **Live demo**: https://spinningarrow.github.io/zoom-vanilla.js
 
@@ -16,7 +20,7 @@ will open the image in a new tab instead of zooming it.
 
 ## Usage
 
-1. Download `dist/zoom-vanilla.min.js` and `css/zoom.css` from GitHub, or
+1. Download `dist/zoom-vanilla.min.js` and `dist/zoom.css` from GitHub, or
    install via npm by running `npm i zoom-vanilla.js`.
 
 2. Add the `zoom-vanilla.min.js` and `zoom.css` files to your HTML page:
