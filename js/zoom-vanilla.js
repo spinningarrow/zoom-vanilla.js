@@ -70,6 +70,7 @@
 			document.addEventListener('click', handleClick)
 			document.addEventListener('keyup', handleEscPressed)
 			document.addEventListener('touchstart', handleTouchStart)
+			document.addEventListener('touchend', handleClick)
 		}
 
 		function removeCloseActiveZoomListeners() {
@@ -77,6 +78,7 @@
 			document.removeEventListener('keyup', handleEscPressed)
 			document.removeEventListener('click', handleClick)
 			document.removeEventListener('touchstart', handleTouchStart)
+			document.removeEventListener('touchend', handleClick)
 		}
 
 		function handleScroll(event) {
