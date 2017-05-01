@@ -1,4 +1,15 @@
-# zoom-vanilla.js
+# zoom-vanilla.js [![npm version](https://badge.fury.io/js/zoom-vanilla.js.svg)](https://www.npmjs.com/package/zoom-vanilla.js)
+
+```
+                                                  _ _ _         _     
+                                                 (_) | |       (_)    
+  _______   ___  _ __ ___ ________   ____ _ _ __  _| | | __ _   _ ___ 
+ |_  / _ \ / _ \| '_ ` _ \______\ \ / / _` | '_ \| | | |/ _` | | / __|
+  / / (_) | (_) | | | | | |      \ V / (_| | | | | | | | (_| |_| \__ \
+ /___\___/ \___/|_| |_| |_|       \_/ \__,_|_| |_|_|_|_|\__,_(_) |___/
+                                                              _/ |    
+                                                             |__/     
+```
 
 A simple library for image zooming; [as seen on Medium][medium-zoom-article].
 
