@@ -36,7 +36,6 @@
 			event.stopPropagation()
 
 			if (document.body.classList.contains('zoom-overlay-open')) return
-			if (event.target.width >= (window.innerWidth - OFFSET)) return
 
 			if (event.metaKey || event.ctrlKey) return openInNewWindow()
 
