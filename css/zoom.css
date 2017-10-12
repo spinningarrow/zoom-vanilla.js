@@ -11,6 +11,7 @@ img.zoom-img {
   cursor: zoom-out;
 }
 .zoom-overlay {
+  cursor: zoom-out;
   z-index: 420;
   background: #fff;
   position: fixed;
@@ -18,7 +19,6 @@ img.zoom-img {
   left: 0;
   right: 0;
   bottom: 0;
-  pointer-events: none;
   filter: "alpha(opacity=0)";
   opacity: 0;
   transition:      opacity 300ms;
