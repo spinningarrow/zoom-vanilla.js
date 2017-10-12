@@ -11,42 +11,57 @@
                                                              |__/     
 ```
 
+**Live demo**: [zoom-vanilla.js in action][live demo].
+
 A simple library for image zooming; [as seen on Medium][medium-zoom-article].
-
-This is a fork of the [jQuery plugin by fat][fat-zoom]. These are the key differences:
-
-1. No jQuery dependency; vanilla JavaScript only
-2. Equivalent file size (the minified version is slightly smaller due to better
-   minification)
-3. Includes bug fixes not present in the original, since the original is no
-   longer being maintained
-
-**Live demo**: https://spinningarrow.github.io/zoom-vanilla.js
-
 It zooms in really smoothly, and zooms out when you click again, scroll away,
 or press the <kbd>esc</kbd> key.
 
 If you hold the <kbd>⌘</kbd> or <kbd>Ctrl</kbd> key when clicking the image, it
 will open the image in a new tab instead of zooming it.
 
+_This is a fork of the [jQuery plugin by fat][fat-zoom]_. These are the key
+differences:
+
+1. **No jQuery dependency**; vanilla JavaScript only
+2. ~Equivalent~smaller file size (the minified version is slightly smaller due
+   to better minification)
+3. Includes bug fixes not present in [fat/zoom.js][fat-zoom], which is no
+   longer being maintained
+
 ## Usage
 
-1. Download `dist/zoom-vanilla.min.js` and `dist/zoom.css` from GitHub, or
-   install via npm by running `npm i zoom-vanilla.js`.
+1. Download the JS and CSS files using any of the following methods:    
+
+	- npm: `npm i -D zoom-vanilla.js`. This will download the the necessary
+	  files to the `node_modules/zoom-vanilla.js/dist/` directory.
+
+    - Directly link to the files hosted on a CDN:
+    
+		- JS:
+		  https://cdn.jsdelivr.net/npm/zoom-vanilla.js/dist/zoom-vanilla.min.js
+        
+        - CSS: https://cdn.jsdelivr.net/npm/zoom-vanilla.js/dist/zoom.css
+    
+	- Manually download `dist/zoom-vanilla.min.js` and `dist/zoom.css` from
+	  GitHub
 
 2. Add the `zoom-vanilla.min.js` and `zoom.css` files to your HTML page:
 
-  ```html
-  <link href="dist/zoom.css" rel="stylesheet"> <!-- inside <head> -->
-  <script src="dist/zoom-vanilla.min.js"></script> <!-- before </body> -->
-  ```
+    ```html
+    <!-- inside <head> -->
+    <link href="path/to/dist/zoom.css" rel="stylesheet">
+
+    <!-- before </body> -->
+    <script src="path/to/dist/zoom-vanilla.min.js"></script>
+    ```
 
 3. Add a `data-action="zoom"` attribute to the images you want to make
    zoomable:
 
-  ```html
-  <img src="img/blog_post_featured.png" data-action="zoom">
-  ```
+    ```html
+    <img src="img/blog_post_featured.png" data-action="zoom">
+    ```
 
 ## Browser support
 
@@ -71,3 +86,5 @@ an issue! Thanks!
 - `npm run build` to build the minified JS and vendor-prefixed CSS
 - `npm run watch` to rebuild when any JS files change (recommended for
   development)
+
+[live demo]: http://code.sahil.me/zoom-vanilla.js
