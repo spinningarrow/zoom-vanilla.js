@@ -3,3 +3,5 @@ js
 index.html
 .editorconfig
 .tern-project
+default.nix
+.envrc
