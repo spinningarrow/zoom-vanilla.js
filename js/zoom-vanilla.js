@@ -225,8 +225,8 @@
 
 			if (!'transition' in document.body.style) return dispose()
 
-			targetImage.addEventListener('transitionend', dispose)
-			targetImage.addEventListener('webkitTransitionEnd', dispose)
+			targetImageWrap.addEventListener('transitionend', dispose)
+			targetImageWrap.addEventListener('webkitTransitionEnd', dispose)
 		}
 
 		function dispose() {
