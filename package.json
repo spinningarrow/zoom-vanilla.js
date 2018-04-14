@@ -1,7 +1,7 @@
 {
   "name": "zoom-vanilla.js",
   "version": "2.0.6",
-  "description": "It's the best way to zoom an image",
+  "description": "Medium's image zoom in vanilla JS (no jQuery)",
   "main": "dist/zoom-vanilla.min.js",
   "repository": {
     "type": "git",
