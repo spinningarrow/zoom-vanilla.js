@@ -29,11 +29,11 @@ differences:
 3. Includes bug fixes not present in [fat/zoom.js][fat-zoom], which is no
    longer being maintained
 
-## Usage
+## Installation
 
 1. Download the JS and CSS files using any of the following methods:    
 
-	- npm: `npm i -D zoom-vanilla.js`. This will download the the necessary
+    - npm: `npm i zoom-vanilla.js`. This will download the the necessary
 	  files to the `node_modules/zoom-vanilla.js/dist/` directory.
 
     - Directly link to the files hosted on a CDN:
@@ -56,12 +56,21 @@ differences:
     <script src="path/to/dist/zoom-vanilla.min.js"></script>
     ```
 
-3. Add a `data-action="zoom"` attribute to the images you want to make
-   zoomable:
+    You can also `import` them if you're using webpack:
 
-    ```html
-    <img src="img/blog_post_featured.png" data-action="zoom">
+    ```javascript
+    import "zoom-vanilla.js/dist/zoom.css"
+    import "zoom-vanilla.js/dist/zoom-vanilla.min.js"
     ```
+
+## Usage
+
+Add a `data-action="zoom"` attribute to the images you want to make
+zoomable:
+
+```html
+<img src="img/blog_post_featured.png" data-action="zoom">
+```
 
 ## Browser support
 
